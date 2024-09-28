@@ -1,0 +1,42 @@
+server{
+    listen 80;
+    # listen 443 ssl ;
+    # http2 on ;
+    # server_name ;
+    root /data/htdocs//http;
+
+    # vue rewrite
+    set $index_page 'index.html';
+    index $index_page;
+    location / {
+        if (!-e $request_filename){
+                rewrite ^/(.*) /$index_page;
+        }
+    }
+
+
+
+    #限制客户端请求体的最大大小。如果客户端发送的请求体超过此大小，Nginx将返回413 Request Entity Too Large响应
+    client_max_body_size 15M;
+    client_body_buffer_size 1M;
+
+
+    location ~ /(static|uploads|assets)/.*\.(php|php5)?$ {
+        deny all;
+    }
+
+    ## enable ssl
+    # if ($server_port !~ 443){
+    #     rewrite ^(/.*)$ https://$host$1 permanent;
+    # }
+    # ssl_certificate ssls/;
+    # ssl_certificate_key ssls/;
+    # include configs/ssl.conf;
+    
+    
+    include configs/php-fpm-php82.conf;
+    include configs/pii.conf;
+    include configs/cache.conf;
+    
+
+}

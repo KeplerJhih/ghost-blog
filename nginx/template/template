@@ -1,0 +1,21 @@
+
+
+# 域名綁定特定html,記得把預設的 set $index_page 'index.html';刪除 
+if ($host ~* "url") {set $index_page 'xxx.html';}
+
+# socket
+location /socket {
+    proxy_pass http://ip:port;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real_IP $remote_addr;
+    proxy_set_header X-Forwarded-for $remote_addr;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+}
+
+# rewrite
+location /service/ {
+    rewrite ^/service/api/(.*) /$1 break;
+    proxy_pass http://xxx:ip/api/;
+}
